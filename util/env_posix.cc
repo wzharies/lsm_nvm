@@ -518,7 +518,7 @@ public:
             *result = env;
         } else {
             char buf[100];
-            snprintf(buf, sizeof(buf), "/mnt/pmemdir/leveldbtest-%d", int(geteuid()));
+            snprintf(buf, sizeof(buf), "/mnt/pmem0.1/pmemdir/leveldbtest-%d", int(geteuid()));
             *result = buf;
         }
         // Directory may already exist
