@@ -210,8 +210,8 @@ int main(const int argc, const char *argv[]) {
     const bool print_stats = utils::StrToBool(props["dbstatistics"]);
     // const bool wait_for_balance = utils::StrToBool(props["dbwaitforbalance"]);
     const bool time_series = utils::StrToBool(props["timeseries"]);
-    // const bool latency = utils::StrToBool(props["latency"]);
-    const bool latency = true;
+    const bool latency = utils::StrToBool(props["latency"]);
+
 
     vector<future<int>> actual_ops;
     int total_ops = 0;
@@ -243,7 +243,7 @@ int main(const int argc, const char *argv[]) {
       printf("********** load result **********\n");
       printf("loading records:%d  use time:%.3f s  IOPS:%.2f iops\n", sum, 1.0 * use_time*1e-6, 1.0 * sum * 1e6 / use_time );
       printf("*********************************\n");
-    } 
+    }
     if( run ) {
       // Peforms transactions
       ycsbc::CoreWorkload wl;
@@ -279,6 +279,19 @@ int main(const int argc, const char *argv[]) {
       db->PrintStats();
       printf("-------------------------------------------\n");
     }
+    // if ( wait_for_balance ) {
+    //   uint64_t sleep_time = 0;
+    //   while(!db->HaveBalancedDistribution()){
+    //     sleep(10);
+    //     sleep_time += 10;
+    //   }
+    //   printf("Wait balance:%lu s\n",sleep_time);
+
+    //   printf("-------------- db statistics --------------\n");
+    //   db->PrintStats();
+    //   printf("-------------------------------------------\n");
+    // }
+    // end
     for (int i = 0; i < nargc; i++) {
       delete nargv[i];
     }
@@ -312,6 +325,14 @@ string ParseCommandLine(int argc, const char *argv[], utils::Properties &props) 
         exit(0);
       }
       props.SetProperty("dbname", argv[argindex]);
+      argindex++;
+    } else if (strcmp(argv[argindex], "-pmpath") == 0) {
+      argindex++;
+      if (argindex >= argc) {
+        UsageMessage(argv[0]);
+        exit(0);
+      }
+      props.SetProperty("pmpath", argv[argindex]);
       argindex++;
     } else if (strcmp(argv[argindex], "-host") == 0) {
       argindex++;
@@ -409,6 +430,22 @@ string ParseCommandLine(int argc, const char *argv[], utils::Properties &props) 
       }
       props.SetProperty("timeseries",argv[argindex]);
       argindex++;
+    } else if(strcmp(argv[argindex],"-flushssd")==0){
+      argindex++;
+      if(argindex >= argc){
+        UsageMessage(argv[0]);
+        exit(0);
+      }
+      props.SetProperty("flushssd",argv[argindex]);
+      argindex++;
+    } else if(strcmp(argv[argindex],"-latency")==0){
+      argindex++;
+      if(argindex >= argc){
+        UsageMessage(argv[0]);
+        exit(0);
+      }
+      props.SetProperty("latency",argv[argindex]);
+      argindex++;
     } else {
       cout << "Unknown option '" << argv[argindex] << "'" << endl;
       exit(0);
@@ -439,12 +476,16 @@ inline bool StrStartWith(const char *str, const char *pre) {
 void Init(utils::Properties &props){
   props.SetProperty("dbname","basic");
   props.SetProperty("dbpath","");
+  props.SetProperty("pmpath","");
   props.SetProperty("load","false");
   props.SetProperty("run","false");
   props.SetProperty("threadcount","1");
   props.SetProperty("dboption","0");
   props.SetProperty("dbstatistics","false");
   props.SetProperty("dbwaitforbalance","false");
+  props.SetProperty("timeseries","false");
+  props.SetProperty("flushssd","false");
+  props.SetProperty("latency","false");
 }
 
 void PrintInfo(utils::Properties &props) {

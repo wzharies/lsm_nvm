@@ -16,8 +16,8 @@ namespace ycsbc {
         //set option
         leveldb::Options options;
         SetOptions(&options, props);
-
-        leveldb::Status s = leveldb::DB::Open(options, dbfilename, dbfilename, &db_);
+        std::string pmpath = props.GetProperty("pmpath","/tmp/test-leveldb");
+        leveldb::Status s = leveldb::DB::Open(options, dbfilename, pmpath, &db_);
 
         if(!s.ok()){
             cerr<<"Can't open leveldb "<<dbfilename<<endl;
