@@ -99,6 +99,10 @@ WRITE80G-4KB-THROUGHPUT() {
 }
 RUN_DB_BENCH() {
     CLEAN_DB
+    if [ -f "$output_file" ]; then
+        rm $output_file
+        echo "delete output_file: $output_file"
+    fi
     parameters="
                 --benchmarks=$benchmarks \
                 --threads=$num_thread \
@@ -133,6 +137,10 @@ RUN_DB_BENCH() {
 
 RUN_YCSB(){
     CLEAN_DB
+    if [ -f "$output_file" ]; then
+        rm $output_file
+        echo "delete output_file: $output_file"
+    fi
     cmd="$APP_PREFIX $ycsb_path/ycsbc $ycsb_path/input/$ycsb_input >> $output_file"
     echo $cmd >> $output_file
     echo $cmd
@@ -158,15 +166,16 @@ CLEAN_DB() {
 SET_OUTPUT_PATH() {
     if [ ! -d "$output_path" ]; then
         # 如果目录不存在，则创建目录
-        mkdir "$output_path"
+        mkdir $output_path
         echo "Created output_path: $output_path"
-    else
-        # 如果目录已存在，则清空目录下的所有文件
-        rm -rf "${output_path:?}/"*
-        echo "Cleared output_path: $output_path"
     fi
-    touch $output_file
-    echo "Created file: $output_file"
+    # else
+    #     # 如果目录已存在，则清空目录下的所有文件
+    #     rm -rf "${output_path:?}/"*
+    #     echo "Cleared output_path: $output_path"
+    # fi
+    # touch $output_file
+    # echo "Created file: $output_file"
 }
 
 MAKE() {
