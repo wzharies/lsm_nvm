@@ -30,7 +30,7 @@ ycsb_input=1KB_ALL
 num_thread=1
 value_size=1024
 num_kvs=$((10*$MB))
-write_buffer_size=$((50*$MB))
+write_buffer_size=$((64*$MB))
 max_file_size=$((128*$MB))
 pm_size=$((200*$GB))
 use_pm=1
@@ -41,7 +41,7 @@ db_mem=$pm_path
 #DRAM buffer size in MB
 export DRAMBUFFSZ=64
 #NVM buffer size in MB
-export NVMBUFFSZ=8192
+export NVMBUFFSZ=$((32 * 1024))
 
 WRITE80G_8GNVM_4K_FLUSHSSD() {
     db_disk=$ssd_path
@@ -148,18 +148,18 @@ RUN_YCSB(){
 }
 
 CLEAN_DB() {
-  if [ -z "$pm_path" ]
+  if [ -z "$db_mem" ]
   then
         echo "PM path empty."
         exit
   fi
-  if [ -z "$leveldb_path" ]
+  if [ -z "$db_disk" ]
   then
         echo "DB path empty."
         exit
   fi
-  rm -rf ${leveldb_path:?}/*
-  rm -rf ${pm_path:?}/*
+  rm -rf ${db_disk:?}/*
+  rm -rf ${db_mem:?}/*
 #   mkdir -p $pm_path
 }
 
@@ -339,16 +339,16 @@ MAKE
 SET_OUTPUT_PATH
 
 echo "chapter 4.1"
-DB_BENCH_TEST
-DB_BENCH_THROUGHPUT
+# DB_BENCH_TEST
+# DB_BENCH_THROUGHPUT
 
 echo "chapter 4.2"
 YCSB_TEST
-YCSB_TEST_LATENCY
+# YCSB_TEST_LATENCY
 
 echo "chapter 4.3"
-DB_BENCH_TEST_FLUSHSSD
-YCSB_TEST_SSD
+# DB_BENCH_TEST_FLUSHSSD
+# YCSB_TEST_SSD
 
 # sudo cp build/libleveldb.a /usr/local/lib/
 # sudo cp -r include/leveldb /usr/local/include/

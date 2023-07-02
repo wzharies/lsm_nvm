@@ -8,7 +8,7 @@
 
 # (A) Production use (optimized mode)
 #OPT ?= -g2 #-DNDEBUG  -std=gnu++0x
-OPT ?= -O -g -march=native -std=gnu++0x
+OPT ?= -O2 -g -march=native -std=gnu++0x
 # OPT ?= -O3 -march=native -DNDEBUG -std=gnu++0x
 #OPT ?= -O3 -DNDEBUG 
 
