@@ -6,6 +6,7 @@
 #define STORAGE_LEVELDB_INCLUDE_OPTIONS_H_
 
 #include <stddef.h>
+#include "filter_policy.h"
 
 namespace leveldb {
 
@@ -81,7 +82,7 @@ struct Options {
   //
   // Default: 4MB
   size_t write_buffer_size = 64 * 1024 * 1024;
-  size_t nvm_buffer_size = 8192ULL * 1024 * 1024;
+  size_t nvm_buffer_size = 8192ULL * 4 * 1024 * 1024;
   int num_levels = 2;
   // Number of open files that can be used by the DB.  You may need to
   // increase this if your database has a large working set (budget
@@ -127,7 +128,7 @@ struct Options {
   // worth switching to kNoCompression.  Even if the input data is
   // incompressible, the kSnappyCompression implementation will
   // efficiently detect that and will switch to uncompressed mode.
-  CompressionType compression;
+  CompressionType compression = kNoCompression;
 
   // EXPERIMENTAL: If true, append to existing MANIFEST and log files
   // when a database is opened.  This can significantly speed up open.
@@ -140,7 +141,7 @@ struct Options {
   // NewBloomFilterPolicy() here.
   //
   // Default: NULL
-  const FilterPolicy* filter_policy;
+  const FilterPolicy* filter_policy = NewBloomFilterPolicy(16);
 
   //NoveLSM changes
   //No of read threads
