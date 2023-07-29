@@ -1,5 +1,5 @@
 CC=/usr/bin/g++
-CFLAGS=-std=c++17 -g -o2 -Wall -pthread -I./
+CFLAGS=-std=c++17 -g -o2 -Wall -pthread -I./ -I../include -L../out-static
 LDFLAGS= -lpthread -lleveldb -lz -lsnappy -lnuma -lpmem
 SUBDIRS= core db 
 SUBSRCS=$(wildcard core/*.cc) $(wildcard db/*.cc)
